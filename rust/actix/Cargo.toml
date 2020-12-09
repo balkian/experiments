@@ -1,0 +1,13 @@
+[package]
+name = "actixtest"
+version = "0.1.0"
+authors = ["J. Fernando Sánchez <balkian@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "1.0.9"
+actix-service = "0.4.2"
+futures = "0.1.29"
+#actix-http = "1.0.0"
