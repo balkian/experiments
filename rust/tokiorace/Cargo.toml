@@ -1,0 +1,11 @@
+[package]
+name = "tokiorace"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.95"
+tokio = { version = "1.43.0", features = ["rt", "time", "macros", "rt-multi-thread"] }
+tokio-test = "0.4.4"
+tracing = { version = "0.1.41", features = ["attributes"] }
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
