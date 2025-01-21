@@ -14,19 +14,14 @@ use tracing_subscriber::prelude::*;
 use std::future::Future;
 
 
-struct Service {
-    t: Transport,
-}
 
+/// Simplified version of a maelstrom event
 #[derive(Debug)]
 struct Event {
     id: usize,
     in_reply_to: Option<usize>,
 }
 
-//type CB<'a> = Box<dyn Fn(Event, &'a mut Transport) -> Box<dyn Future<Output = Result<()>>>>;
-
-//type CB<'a> = dyn Fn(Event, &mut Transport) -> BoxFuture<'a, Result<()>>;
 
 type BoxFuture<'a, T> = Box<dyn Future<Output = T> + 'a>;
 type CallbackDyn = dyn for<'a> Fn(Event, &'a mut Transport) -> BoxFuture<'a, Result<()>>;
@@ -36,6 +31,8 @@ enum Handler {
     Channel(oneshot::Sender<Event>)
 }
 
+/// Very simplified transport that receives from a channel and sends to another channel. In practice,
+/// this would be replaced with a transport that reads/writes events from/to files or a connection.
 struct Transport {
     msg_id: usize,
     outbox: Sender<Event>,
@@ -137,6 +134,7 @@ impl Transport {
     }
 }
 
+/// Simple macro to generate a dyn-safe closure from an async block.
 macro_rules! callback {
     (|$e:ident, $svc:ident| $blk:block) => {
         |$e, $svc| {
@@ -148,6 +146,12 @@ macro_rules! callback {
 
 }
 
+struct Service {
+    t: Transport,
+}
+
+/// All-in-one implementation of a service. In practice, this would be a trait where the `serve`
+/// part is kind of generic, and the process varies between implementers.
 impl Service {
     #[instrument(level="debug", skip(self),ret)]
     async fn process(&mut self, event: Event) -> Result<()>{
